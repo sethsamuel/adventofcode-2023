@@ -12,3 +12,6 @@ clean:
 
 test:
 	go test ./...
+
+debug:
+	go test -v ./...

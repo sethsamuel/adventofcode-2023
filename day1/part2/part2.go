@@ -34,22 +34,30 @@ func Find(a []string, x string) int {
 func GetFirstAndLastDigits(s string) (string, string) {
 	var numbers = [...]string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
 	re, _ := regexp.Compile(fmt.Sprintf("([0-9]|%s)", strings.Join(numbers[:], "|")))
-	matches := re.FindAllString(s, -1)
-	// fmt.Println(matches)
-	if (len(matches)) == 0 {
-		return "0", "0"
+
+	var firstMatch string
+	var lastMatch string
+
+	for i := 0; i < len(s); i++ {
+		match := re.FindString(s[i:])
+		if match == "" {
+			continue
+		}
+		if firstMatch == "" {
+			firstMatch = match
+		}
+		lastMatch = match
 	}
-	firstMatch := matches[0]
+
 	isFirstNumber, _ := regexp.MatchString("[0-9]", firstMatch)
 	if !isFirstNumber {
 		firstMatch = fmt.Sprint(Find(numbers[:], firstMatch) + 1)
 	}
-	secondMatch := matches[len(matches)-1]
-	isSecondNumber, _ := regexp.MatchString("[0-9]", secondMatch)
+	isSecondNumber, _ := regexp.MatchString("[0-9]", lastMatch)
 	if !isSecondNumber {
-		secondMatch = fmt.Sprint(Find(numbers[:], secondMatch) + 1)
+		lastMatch = fmt.Sprint(Find(numbers[:], lastMatch) + 1)
 	}
-	return firstMatch, secondMatch
+	return firstMatch, lastMatch
 }
 
 func GetConcatenatedDigits(s string) (int, error) {

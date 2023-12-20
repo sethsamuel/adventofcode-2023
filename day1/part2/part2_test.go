@@ -10,11 +10,11 @@ func TestGetFirstAndLastDigits(t *testing.T) {
 }
 
 func TestGetConcatenatedDigits(t *testing.T) {
-	i, err := GetConcatenatedDigits("as2lkj3lk8ltenkj")
+	i, err := GetConcatenatedDigits("as2lkj3lk8lninekj")
 	if err != nil {
 		t.Fail()
 	}
-	if i != 210 {
+	if i != 29 {
 		t.Fail()
 	}
 }
