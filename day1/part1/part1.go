@@ -1,25 +1,18 @@
 package part1
 
 import (
+	_ "embed"
 	"fmt"
-	"os"
-	"path"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func Run() {
-	fmt.Println("Day 1 Part 1")
-	ex, _ := os.Executable()
-	f := path.Join(filepath.Dir(ex), "day1", "./input.txt")
+//go:embed input.txt
+var data string
 
-	data, err := os.ReadFile(f)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+func Run() {
+
 	fmt.Println(SumOfLines(string(data)))
 }
 
