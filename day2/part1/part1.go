@@ -65,25 +65,3 @@ func SumValidLineIds(s string) int {
 	}
 	return validIdSum
 }
-
-// func GetConcatenatedDigits(s string) (int, error) {
-// 	first, last := GetFirstAndLastDigits(s)
-// 	return strconv.Atoi(first + last)
-// }
-
-// func SumOfLines(s string) (int, error) {
-// 	lines := strings.Split(s, "\n")
-// 	lineDigits := make([]int, len(lines))
-// 	for i, line := range lines {
-// 		d, err := GetConcatenatedDigits(line)
-// 		if err != nil {
-// 			return -1, err
-// 		}
-// 		lineDigits[i] = d
-// 	}
-// 	sum := 0
-// 	for _, d := range lineDigits {
-// 		sum += d
-// 	}
-// 	return sum, nil
-// }

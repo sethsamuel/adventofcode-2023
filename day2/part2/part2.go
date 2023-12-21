@@ -1,83 +1,66 @@
 package part2
 
 import (
+	_ "embed"
 	"fmt"
-	"os"
-	"path"
-	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
+//go:embed "input.txt"
+var data string
+
+type Color string
+
+const (
+	red   Color = "red"
+	green Color = "green"
+	blue  Color = "blue"
+)
+
+var limits = map[Color]int{
+	red:   12,
+	green: 13,
+	blue:  14,
+}
+
 func Run() {
-	fmt.Println("Day 1 Part 2")
-	ex, _ := os.Executable()
-	f := path.Join(filepath.Dir(ex), "day1", "./input.txt")
-
-	data, err := os.ReadFile(f)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(SumOfLines(string(data)))
+	fmt.Println("Day 2 Part 1")
+	fmt.Println(SumPowers(data))
 }
 
-func Find(a []string, x string) int {
-	for i, n := range a {
-		if x == n {
-			return i
-		}
-	}
-	return -1
-}
-func GetFirstAndLastDigits(s string) (string, string) {
-	var numbers = [...]string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
-	re, _ := regexp.Compile(fmt.Sprintf("([0-9]|%s)", strings.Join(numbers[:], "|")))
+// Example line:
+// Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+func ParseLine(s string) (int, map[Color]int) {
+	re, _ := regexp.Compile("Game ([0-9]+):")
+	matches := re.FindStringSubmatch(s)
+	id, _ := strconv.Atoi(matches[1])
 
-	var firstMatch string
-	var lastMatch string
-
-	for i := 0; i < len(s); i++ {
-		match := re.FindString(s[i:])
-		if match == "" {
-			continue
-		}
-		if firstMatch == "" {
-			firstMatch = match
-		}
-		lastMatch = match
+	m := make(map[Color]int)
+	draws := regexp.MustCompile("[;,]").Split(strings.TrimSpace(strings.Split(s, ":")[1]), -1)
+	for _, s := range draws {
+		parts := strings.Split(strings.TrimSpace(s), " ")
+		count, _ := strconv.Atoi(parts[0])
+		color := Color(parts[1])
+		m[color] = max(count, m[color])
 	}
 
-	isFirstNumber, _ := regexp.MatchString("[0-9]", firstMatch)
-	if !isFirstNumber {
-		firstMatch = fmt.Sprint(Find(numbers[:], firstMatch) + 1)
-	}
-	isSecondNumber, _ := regexp.MatchString("[0-9]", lastMatch)
-	if !isSecondNumber {
-		lastMatch = fmt.Sprint(Find(numbers[:], lastMatch) + 1)
-	}
-	return firstMatch, lastMatch
+	return id, m
 }
 
-func GetConcatenatedDigits(s string) (int, error) {
-	first, last := GetFirstAndLastDigits(s)
-	return strconv.Atoi(first + last)
+func GetLinePower(s string) int {
+	_, counts := ParseLine(s)
+	return counts[red] * counts[green] * counts[blue]
 }
 
-func SumOfLines(s string) (int, error) {
+func SumPowers(s string) int {
 	lines := strings.Split(s, "\n")
-	lineDigits := make([]int, len(lines))
-	for i, line := range lines {
-		d, err := GetConcatenatedDigits(line)
-		if err != nil {
-			return -1, err
-		}
-		lineDigits[i] = d
+	powerSum := 0
+	for _, s := range lines {
+		power := GetLinePower(s)
+		powerSum += power
+
 	}
-	sum := 0
-	for _, d := range lineDigits {
-		sum += d
-	}
-	return sum, nil
+	return powerSum
 }
